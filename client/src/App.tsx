@@ -1,42 +1,23 @@
+/** Operational Ledger design reminder: the shell is a Swiss-editorial budget workspace with a dark rail, country ribbon, and ledger-first content. */
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
+import { AppShell } from "./components/AppShell";
+import { WorkspaceProvider, useWorkspace } from "./contexts/WorkspaceContext";
+import Dashboard from "./pages/Dashboard";
+import PlanPage from "./pages/PlanPage";
+import SharedActivitiesPage from "./pages/SharedActivitiesPage";
+import AdminPage from "./pages/AdminPage";
+import LoginPage from "./pages/LoginPage";
+import NotFound from "./pages/NotFound";
 
-
-function Router() {
-  return (
-    <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
-    </Switch>
-  );
+function AuthenticatedRoutes() {
+  const { user, authLoading, firebaseReady } = useWorkspace();
+  if (authLoading) return <div className="app-loading"><span className="ledger-loader" />Opening your workspace…</div>;
+  if (firebaseReady && !user) return <LoginPage />;
+  return <AppShell><Switch><Route path="/" component={Dashboard} /><Route path="/plan" component={PlanPage} /><Route path="/shared" component={SharedActivitiesPage} /><Route path="/admin" component={AdminPage} /><Route path="/404" component={NotFound} /><Route component={NotFound} /></Switch></AppShell>;
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
-function App() {
-  return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
-  );
-}
-
+function App() { return <ErrorBoundary><TooltipProvider><WorkspaceProvider><AuthenticatedRoutes /><Toaster /></WorkspaceProvider></TooltipProvider></ErrorBoundary>; }
 export default App;
