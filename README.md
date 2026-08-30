@@ -15,11 +15,11 @@ Action Plan Planner replaces the repetitive AP27 action-plan spreadsheet workflo
 
 ## Firebase setup
 
-Create a Firebase project and register a **web app**. Copy the supplied Firebase web configuration values into the six `VITE_FIREBASE_*` repository secrets listed in `firebase-configuration.example.txt`. Enable **Google** under Authentication → Sign-in method, then create a Firestore database. Firebase’s current web guidance recommends the modular JavaScript SDK used in this project, while Firestore supports a direct web-SDK architecture secured through Authentication and Firestore Security Rules. [1] [2]
+This repository is connected to Firebase project **`action-plan-27`**. The project now has a registered web app named **Action Plan Planner**, Google sign-in enabled, and the default Cloud Firestore database created in **`me-west1 (Tel Aviv)`** using Standard edition and production mode. The reviewed `firestore.rules` policy has been published to the database. Firebase’s current web guidance recommends the modular JavaScript SDK used in this project, while Firestore supports a direct web-SDK architecture secured through Authentication and Firestore Security Rules. [1] [2]
 
-Deploy `firestore.rules` from the Firebase console’s Firestore Rules editor, or with the Firebase CLI after reviewing it. The rules limit reads to signed-in members, reserve master-data and budget management for owners/admins, let owners manage user roles, and allow owners/admins/editors to maintain action-plan activities. Firestore test mode is intentionally not an acceptable production configuration because it permits unauthenticated data access. [2]
+The client includes the public web-app configuration as a fallback for this registered project, while the six `VITE_FIREBASE_*` GitHub settings remain available as deployment overrides. No service-account credential is used or stored in the frontend. The rules limit reads to signed-in members, reserve master-data and budget management for owners/admins, let owners manage user roles, and allow owners/admins/editors to maintain action-plan activities. Firestore test mode is intentionally not an acceptable production configuration because it permits unauthenticated data access. [2]
 
-Before users sign in from the published site, add the GitHub Pages domain (`<account>.github.io`) under Firebase Authentication → Settings → Authorized domains. Google authentication must also be enabled in the Firebase console. [3]
+Before users sign in from the published site, add the final GitHub Pages domain (`<account>.github.io` or `<account>.github.io/<repository-name>` as applicable) under Firebase Authentication → Settings → Authorized domains. Google authentication is already enabled in the Firebase console. [3]
 
 ## GitHub Pages setup
 
@@ -53,7 +53,7 @@ pnpm install
 pnpm dev
 ```
 
-Without Firebase configuration, the application deliberately opens in **local preview mode** so the interface can be evaluated. Local preview data is browser-only and is not a multi-user substitute.
+The application can still be evaluated in local preview mode when Firebase is intentionally disabled, but the current repository configuration is wired to the registered Firebase project. Once a user signs in, workspace records are stored in Firestore and synchronized across authenticated devices. Local preview data, when explicitly used, remains browser-only and is not a multi-user substitute.
 
 ## References
 
